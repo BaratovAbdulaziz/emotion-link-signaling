@@ -20,8 +20,9 @@ wss.on('connection', (ws) => {
 
     switch (msg.type) {
       case 'join': {
-        roomId = msg.room;
-        peerId = msg.peerId || uuidv4();
+        const d = msg.data || {};
+        roomId = d.room || msg.room;
+        peerId = d.peerId || msg.peerId || uuidv4();
         ws.peerId = peerId;
         ws.roomId = roomId;
 
