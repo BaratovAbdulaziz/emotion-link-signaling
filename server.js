@@ -29,15 +29,15 @@ wss.on('connection', (ws) => {
         const room = rooms.get(roomId);
         room.set(peerId, ws);
 
-        ws.send(JSON.stringify({ type: 'joined', peerId, roomId }));
+        ws.send(JSON.stringify({ type: 'joined', sender: peerId, data: { peerId, roomId } }));
 
         const otherPeers = [...room.keys()].filter(id => id !== peerId);
         if (otherPeers.length > 0) {
-          ws.send(JSON.stringify({ type: 'peers', peers: otherPeers }));
+          ws.send(JSON.stringify({ type: 'peers', data: otherPeers }));
           otherPeers.forEach(otherId => {
             const other = room.get(otherId);
             if (other && other.readyState === 1) {
-              other.send(JSON.stringify({ type: 'peer_joined', peerId }));
+              other.send(JSON.stringify({ type: 'peer_joined', sender: peerId }));
             }
           });
         }
